@@ -53,26 +53,10 @@ final class SingleImageViewController: UIViewController {
         imageView.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
     }
-    
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
-    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        //        scrollView.layoutIfNeeded()
-        //        UIView.animate(withDuration: 0.2) {
-        //            self.rescaleAndCenterImageInScrollView(image: self.image!)
-        //        }
-        //    }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-            scrollView.layoutIfNeeded()
-            UIView.animate(withDuration: 0.2) {
-                self.rescaleAndCenterImageInScrollView(image: self.image!)
-            }
-        }
-    }
 }
-
