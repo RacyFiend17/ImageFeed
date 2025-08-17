@@ -1,10 +1,3 @@
-//
-//  SingleImageViewController.swift
-//  ImageFeed
-//
-//  Created by Дмитрий Перчемиди on 12.08.2025.
-//
-
 import UIKit
 
 final class SingleImageViewController: UIViewController {
@@ -61,11 +54,6 @@ extension SingleImageViewController: UIScrollViewDelegate {
         return imageView
     }
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        //        scrollView.layoutIfNeeded()
-        //        UIView.animate(withDuration: 0.2) {
-        //            self.rescaleAndCenterImageInScrollView(image: self.image!)
-        //        }
-        //    }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             scrollView.layoutIfNeeded()
