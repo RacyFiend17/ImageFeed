@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3FB3FB552E571F1F003D8AF4 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FB3FB542E571F1F003D8AF4 /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		3F349B242E4768A4004C1D5A /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = ImageFeed.app; path = "/Users/racyfiend/Documents/Swift Projects/Yandex_practicum/ImageFeed/build/Debug-iphoneos/ImageFeed.app"; sourceTree = "<absolute>"; };
+		3FB3FAAB2E549209003D8AF4 /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FB3FB542E571F1F003D8AF4 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,11 +34,6 @@
 			path = ImageFeed;
 			sourceTree = "<group>";
 		};
-		3FC2B7712E531E1B00B3CD57 /* Auth */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Auth;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FB3FB552E571F1F003D8AF4 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +52,17 @@
 			isa = PBXGroup;
 			children = (
 				3F349B262E4768A4004C1D5A /* ImageFeed */,
-				3FC2B7712E531E1B00B3CD57 /* Auth */,
+				3FB3FAAB2E549209003D8AF4 /* ImageFeed.app */,
+				3FB3FB532E571F1F003D8AF4 /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		3FB3FB532E571F1F003D8AF4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3FB3FB542E571F1F003D8AF4 /* WebKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,13 +82,12 @@
 			);
 			fileSystemSynchronizedGroups = (
 				3F349B262E4768A4004C1D5A /* ImageFeed */,
-				3FC2B7712E531E1B00B3CD57 /* Auth */,
 			);
 			name = ImageFeed;
 			packageProductDependencies = (
 			);
 			productName = ImageFeed;
-			productReference = 3F349B242E4768A4004C1D5A /* ImageFeed.app */;
+			productReference = 3FB3FAAB2E549209003D8AF4 /* ImageFeed.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
