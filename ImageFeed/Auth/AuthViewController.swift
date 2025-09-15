@@ -1,7 +1,8 @@
 import UIKit
 
 final class AuthViewController: UIViewController {
-    let segueIdentifier = "ShowWebView"
+    private let segueIdentifier = "ShowWebView"
+    private let oauth2Service = OAuth2Service.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
@@ -34,6 +35,18 @@ extension AuthViewController: WebViewViewControllerDelegate {
         vc.dismiss(animated: true)
     }
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-//    TODO:
+        oauth2Service.fetchOAuthToken(code: code) { result in
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    vc.dismiss(animated: true)
+                    print("Successfully authenticated!")
+                }
+            case .failure(let error):
+                print("Failed to fetch token: \(error)")
+            }
+        }
+        
     }
 }
+
