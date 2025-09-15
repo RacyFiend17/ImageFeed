@@ -2,7 +2,8 @@ import UIKit
 
 final class AuthViewController: UIViewController {
     private let segueIdentifier = "ShowWebView"
-    private let oauth2Service = OAuth2Service.shared
+    private let oAuth2Service = OAuth2Service.shared
+    var delegate: AuthViewViewControllerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
@@ -30,18 +31,21 @@ final class AuthViewController: UIViewController {
     }
 }
 
+protocol AuthViewViewControllerDelegate: AnyObject {
+    func didAuthenticate(_ vc: AuthViewController)
+}
+
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        oauth2Service.fetchOAuthToken(code: code) { result in
+        vc.dismiss(animated: true)
+        oAuth2Service.fetchOAuthToken(code: code) { [self] result in
             switch result {
             case .success:
-                DispatchQueue.main.async {
-                    vc.dismiss(animated: true)
-                    print("Successfully authenticated!")
-                }
+                delegate?.didAuthenticate(self)
+                print("Successfully authenticated!")
             case .failure(let error):
                 print("Failed to fetch token: \(error)")
             }
