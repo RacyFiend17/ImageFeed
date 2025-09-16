@@ -5,7 +5,7 @@ final class ProfileViewController: UIViewController {
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
-        nameLabel.textColor = UIColor(named: "YP White") ?? .white
+        nameLabel.textColor = UIColor(resource: .ypWhite)
         nameLabel.text = "Екатерина Новикова"
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         return nameLabel
@@ -13,7 +13,7 @@ final class ProfileViewController: UIViewController {
     private lazy var loginNameLabel: UILabel = {
         let loginNameLabel = UILabel()
         loginNameLabel.font = .systemFont(ofSize: 13)
-        loginNameLabel.textColor = UIColor(named: "YP Gray") ?? .gray
+        loginNameLabel.textColor = UIColor(resource: .ypGray)
         loginNameLabel.text = "@ekaterina_naov"
         loginNameLabel.translatesAutoresizingMaskIntoConstraints = false
         return loginNameLabel
@@ -21,7 +21,7 @@ final class ProfileViewController: UIViewController {
     private lazy var descriptionLabel: UILabel = {
         let descriptionLabel = UILabel()
         descriptionLabel.font = .systemFont(ofSize: 13)
-        descriptionLabel.textColor = UIColor(named: "YP White") ?? .white
+        descriptionLabel.textColor = UIColor(resource: .ypWhite)
         descriptionLabel.text = "Hello world!"
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         return descriptionLabel
@@ -36,11 +36,11 @@ final class ProfileViewController: UIViewController {
     
     private func setupLogOutButton()  {
         logoutButton = UIButton.systemButton(
-            with: UIImage(named: "logout_button") ?? UIImage(),
+            with: UIImage(resource: .logoutButton),
             target: self,
             action: #selector(Self.didTapLogoutButton)
         )
-        logoutButton.tintColor = UIColor(named: "YP Red") ?? .red
+        logoutButton.tintColor = UIColor(resource: .ypRed)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -49,7 +49,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func makeAvatarImageView() {
-        avatarImageView.image = UIImage(named: "avatar_image") ?? UIImage()
+        avatarImageView.image = UIImage(resource: .avatar)
         avatarImageView.contentMode = .scaleAspectFit
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -78,7 +78,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = UIColor(named: "YP Black") ?? .black
+        view.backgroundColor = UIColor(resource: .ypBlack)
         
         makeAvatarImageView()
         setupLogOutButton()
