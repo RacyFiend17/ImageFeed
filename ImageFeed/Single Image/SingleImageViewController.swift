@@ -46,7 +46,6 @@ final class SingleImageViewController: UIViewController {
         imageView.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
     }
-    
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
@@ -61,6 +60,8 @@ extension SingleImageViewController: UIScrollViewDelegate {
                 self.rescaleAndCenterImageInScrollView(image: self.image!)
             }
         }
+
     }
+    
 }
 
