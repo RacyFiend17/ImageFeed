@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     private let segueIdentifier = "ShowWebView"
@@ -41,7 +42,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
     }
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
+        ProgressHUD.show()  
         oAuth2Service.fetchOAuthToken(code: code) { [self] result in
+            ProgressHUD.dismiss()
             switch result {
             case .success:
                 delegate?.didAuthenticate(self)
@@ -50,6 +53,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("Failed to fetch token: \(error)")
             }
         }
+        
         
     }
 }
