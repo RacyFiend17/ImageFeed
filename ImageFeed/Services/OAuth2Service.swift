@@ -25,7 +25,7 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        
+        assert(Thread.isMainThread)
         guard lastCode != code else {
             completion(.failure(NetworkError.invalidRequest))
             return
