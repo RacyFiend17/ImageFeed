@@ -4,6 +4,7 @@ final class SplashViewController: UIViewController {
     private let showAuthenticationScreenSegueIdentifier = "showAuthenticationScreen"
     private let showImagesListSceneSegueIdentifier = "showImagesListScene"
     private let storage = OAuth2TokenStorage()
+    private let profileService = ProfileService.shared
     
     private func switchToBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -17,9 +18,26 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super .viewDidAppear(animated)
         if storage.token != nil {
-            switchToBarController()
+            guard let token = storage.token else { return }
+            fetchProfile(token: token)
         } else {
             performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: self)
+        }
+    }
+    
+    private func fetchProfile(token: String){
+        UIBlockingProgressHUD.show()
+        profileService.fetchProfile(token) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self else { return }
+            switch result {
+            case .success(let profile):
+                self.switchToBarController()
+            case .failure(let error):
+                print("Error: \(error)")
+                break
+            }
         }
     }
 }
@@ -28,7 +46,10 @@ final class SplashViewController: UIViewController {
 extension SplashViewController: AuthViewViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
-        switchToBarController()
+        guard let token = storage.token else {
+            return
+        }
+        fetchProfile(token: token)
     }
 }
 

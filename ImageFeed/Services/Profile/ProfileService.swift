@@ -1,0 +1,84 @@
+import Foundation
+
+enum FetchProfileErrors: Error{
+    case tokenError(String)
+}
+
+struct ProfileResult: Codable {
+    let username: String
+    let firstName: String
+    let lastName: String
+    let bio: String?
+    
+    
+    enum CodingKeys: String, CodingKey {
+        case username
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case bio
+    }
+}
+
+struct Profile {
+    let username: String
+    let name: String
+    let loginName: String
+    let bio: String?
+}
+
+
+final class ProfileService {
+    
+    private var task: URLSessionTask?
+    private var session: URLSession = .shared
+    static let shared = ProfileService()
+    private(set) var profile: Profile?
+    
+    private init() {}
+    
+    private func makeProfileRequest(token: String) -> URLRequest? {
+        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/me") else { return nil }
+        print(url)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return request
+    }
+    
+    func fetchProfile(_ token: String?, completion: @escaping (Result<Profile, Error>) -> Void) {
+        guard let token else { completion(.failure(FetchProfileErrors.tokenError("Token is nil"))); return }
+        
+        task?.cancel()
+        
+        guard let request = makeProfileRequest(token: token) else {
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        
+        let task = session.data(for: request) { [weak self] result in
+            switch result {
+                case .success(let data):
+                do {
+                    let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
+                    
+                    let profile = Profile(
+                        username: profileResult.username,
+                        name:  profileResult.firstName + " " + profileResult.lastName,
+                        loginName: "@\(profileResult.username)",
+                        bio: profileResult.bio)
+                    self?.profile = profile
+                    completion(.success(profile))
+                }
+                catch {
+                    completion(.failure(NetworkError.decodingError(error)))
+                    return
+                }
+                case .failure(let error):
+                completion(.failure(error))
+            }
+            self?.task = nil
+        }
+        self.task = task
+        task.resume()
+    }
+}
