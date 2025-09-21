@@ -3,8 +3,9 @@ import UIKit
 final class SplashViewController: UIViewController {
     private let showAuthenticationScreenSegueIdentifier = "showAuthenticationScreen"
     private let showImagesListSceneSegueIdentifier = "showImagesListScene"
-    private let storage = OAuth2TokenStorage()
+    private let storage = OAuth2TokenStorage.shared
     private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
     
     private func switchToBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -33,6 +34,7 @@ final class SplashViewController: UIViewController {
             guard let self else { return }
             switch result {
             case .success(let profile):
+                profileImageService.fetchProfileImageURL(username: profile.username) { _ in }
                 self.switchToBarController()
             case .failure(let error):
                 print("Error: \(error)")

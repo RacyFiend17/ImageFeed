@@ -2,7 +2,7 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
-    private var oAuth2TokenStorage = OAuth2TokenStorage()
+    private var oAuth2TokenStorage = OAuth2TokenStorage.shared
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
