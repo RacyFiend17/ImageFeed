@@ -24,6 +24,7 @@ final class ProfileImageService {
     private var task: URLSessionTask?
     private var session: URLSession = .shared
     private(set) var avatarURL: String?
+    static let didChangeNotification = Notification.Name(rawValue: "didChangeNotification")
     private init() {}
     
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
@@ -57,6 +58,10 @@ final class ProfileImageService {
                     }
                     self.avatarURL = avatarURL
                     completion(.success(avatarURL))
+                    NotificationCenter.default.post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": avatarURL])
                 }
                 catch {
                     completion(.failure(NetworkError.decodingError(error)))

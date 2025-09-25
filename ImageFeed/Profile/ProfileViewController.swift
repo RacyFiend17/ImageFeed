@@ -3,6 +3,8 @@ import UIKit
 final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
     private var oAuth2TokenStorage = OAuth2TokenStorage.shared
+    private var profileImageObserver: NSObjectProtocol?
+    
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
@@ -36,6 +38,25 @@ final class ProfileViewController: UIViewController {
         if let profile = profileService.profile {
             updateProfileDetails(profile: profile)
         }
+        profileImageObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.updateAvatar()
+        }
+        updateAvatar()
+    }
+    
+    let set: Set<Int> = [0]
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        // TODO
     }
     
     private func updateProfileDetails(profile: Profile) {
