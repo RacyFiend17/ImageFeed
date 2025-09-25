@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
@@ -49,14 +50,39 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
-    let set: Set<Int> = [0]
-    
     private func updateAvatar() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        // TODO
+            let imageUrl = URL(string: profileImageURL)
+        else { print("imageUrl is nil"); return }
+        
+        print("imageUrl: \(imageUrl)")
+        
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 61)
+        avatarImageView.kf.indicatorType = .activity
+        avatarImageView.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+                
+                switch result {
+                case .success(let value):
+                    print("Картинка \(value.image) загружена из источника \(value.source) с размером: \(value.image.size)")
+                    print("Картинка загружена из \(value.cacheType)")
+                    
+                case .failure(let error):
+                    print(error)
+                }
+        }
     }
     
     private func updateProfileDetails(profile: Profile) {
@@ -80,7 +106,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func makeAvatarImageView() {
-        avatarImageView.image = UIImage(resource: .avatar)
+        avatarImageView.image = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
         avatarImageView.contentMode = .scaleAspectFit
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
     }

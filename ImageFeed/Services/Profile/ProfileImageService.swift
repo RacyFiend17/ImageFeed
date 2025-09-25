@@ -9,7 +9,7 @@ struct ProfileImage: Decodable {
 struct UserResult: Decodable {
     let profileImage: ProfileImage
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case profileImage = "profile_image"
     }
 }
@@ -28,10 +28,11 @@ final class ProfileImageService {
     private init() {}
     
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
-        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/users/:\(username)") else { return nil }
+        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/users/\(username)") else { return nil }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
         return request
     }
     

@@ -42,6 +42,7 @@ extension URLSession {
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
     ) -> URLSessionTask {
+        
         let task = data(for: request) { result in
             switch result {
             case .success(let data):
