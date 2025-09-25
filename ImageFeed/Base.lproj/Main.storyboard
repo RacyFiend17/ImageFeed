@@ -209,30 +209,10 @@
                             <color key="backgroundColor" name="YP Black"/>
                         </tabBarAppearance>
                     </tabBar>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="lkh-7I-pKH"/>
-                        <segue destination="VuO-X7-BLS" kind="relationship" relationship="viewControllers" id="9yd-CC-VJa"/>
-                    </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B4M-z3-RX9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1466" y="438"/>
-        </scene>
-        <!--Profile-->
-        <scene sceneID="XMs-bp-kRg">
-            <objects>
-                <viewController storyboardIdentifier="ProfileViewController" title="Profile" id="VuO-X7-BLS" customClass="ProfileViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ipb-Bf-9ia">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="oqD-tE-zm8"/>
-                        <color key="backgroundColor" name="YP Black"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="" image="profile_active" id="PRZ-HW-0Gy"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="z0H-W8-SAI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-428.24427480916029" y="742.95774647887333"/>
         </scene>
         <!--Auth VIew-->
         <scene sceneID="Pcu-Mq-dFi">
@@ -355,7 +335,6 @@
         <image name="like_button_no_active" width="44" height="44"/>
         <image name="logo_of_unsplash" width="60" height="60"/>
         <image name="main_active" width="30" height="30"/>
-        <image name="profile_active" width="30" height="30"/>
         <image name="share_button" width="50.333332061767578" height="50"/>
         <image name="splash_screen_logo" width="75" height="78"/>
         <namedColor name="YP Black">
