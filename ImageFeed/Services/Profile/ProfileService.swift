@@ -54,25 +54,19 @@ final class ProfileService {
             return
         }
         
-        let task = session.data(for: request) { [weak self] result in
+        let task = session.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
             switch result {
-                case .success(let data):
-                do {
-                    let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
-                    
-                    let profile = Profile(
-                        username: profileResult.username,
-                        name:  profileResult.firstName + " " + profileResult.lastName,
-                        loginName: "@\(profileResult.username)",
-                        bio: profileResult.bio)
-                    self?.profile = profile
-                    completion(.success(profile))
-                }
-                catch {
-                    completion(.failure(NetworkError.decodingError(error)))
-                    return
-                }
-                case .failure(let error):
+            case .success(let profileResult):
+                let profile = Profile(
+                    username: profileResult.username,
+                    name:  profileResult.firstName + " " + profileResult.lastName,
+                    loginName: "@\(profileResult.username)",
+                    bio: profileResult.bio)
+                self?.profile = profile
+                completion(.success(profile))
+                
+            case .failure(let error):
+                print("[fetchProfile]: Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))
             }
             self?.task = nil

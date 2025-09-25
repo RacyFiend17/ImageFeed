@@ -1,9 +1,9 @@
 import Foundation
 
 struct ProfileImage: Decodable {
-    let small: String?
-    let medium: String?
-    let large: String?
+    let small: String
+    let medium: String
+    let large: String
 }
 
 struct UserResult: Decodable {
@@ -47,27 +47,21 @@ final class ProfileImageService {
             return
         }
         
-        let task = session.data(for: request) { [weak self] result in
+        let task = session.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
-                case .success(let data):
+            case .success(let result):
                 guard let self else { return }
-                do {
-                    let userResult = try JSONDecoder().decode(UserResult.self, from: data)
-                    guard let avatarURL = userResult.profileImage.small else {
-                        return
-                    }
-                    self.avatarURL = avatarURL
-                    completion(.success(avatarURL))
-                    NotificationCenter.default.post(
-                        name: ProfileImageService.didChangeNotification,
-                        object: self,
-                        userInfo: ["URL": avatarURL])
-                }
-                catch {
-                    completion(.failure(NetworkError.decodingError(error)))
-                    return
-                }
-                case .failure(let error):
+                self.avatarURL = result.profileImage.small
+                completion(.success(result.profileImage.small))
+                
+                NotificationCenter.default.post(
+                    name: ProfileImageService.didChangeNotification,
+                    object: self,
+                    userInfo: ["URL": avatarURL ?? ""])
+                
+                
+            case .failure(let error):
+                print("[fetchProfileImageURL]: Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))
             }
             self?.task = nil
@@ -75,5 +69,5 @@ final class ProfileImageService {
         self.task = task
         task.resume()
     }
-
+    
 }

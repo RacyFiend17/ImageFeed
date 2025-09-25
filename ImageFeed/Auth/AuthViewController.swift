@@ -52,10 +52,22 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("Successfully authenticated!")
             case .failure(let error):
                 print("Failed to fetch token: \(error)")
+                self?.showAuthErrorAlert()
             }
         }
-        
-        
+    }
+}
+
+extension AuthViewController {
+    func showAuthErrorAlert() {
+        let alertController = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
