@@ -9,6 +9,7 @@ protocol WebViewViewControllerDelegate: AnyObject {
 final class WebViewViewController: UIViewController {
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
+    private var estimatedProgressObservation: NSKeyValueObservation?
     enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
@@ -19,28 +20,10 @@ final class WebViewViewController: UIViewController {
         loadAuthView()
         webView.navigationDelegate = self
         progressView.progress = 0
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super .viewDidAppear(animated)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
-    }
-    
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        
+        estimatedProgressObservation = webView.observe(\.estimatedProgress) { [weak self] _, _ in
+            guard let self else { return }
+            self.updateProgress()
         }
     }
     

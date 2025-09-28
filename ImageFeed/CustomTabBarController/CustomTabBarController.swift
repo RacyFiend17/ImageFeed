@@ -1,14 +1,22 @@
-//
-//  tabBarController.swift
-//  ImageFeed
-//
-//  Created by Дмитрий Перчемиди on 12.08.2025.
-//
-
-import Foundation
 import SwiftUI
 
 final class CustomTabBarController: UITabBarController {
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let imagesListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController")
+        let profileViewController = ProfileViewController()
+        profileViewController.tabBarItem = UITabBarItem(
+            title: "",
+            image: UIImage(resource: .profileActive),
+            selectedImage: nil
+            )
+        
+        viewControllers = [imagesListViewController, profileViewController]
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabBar()

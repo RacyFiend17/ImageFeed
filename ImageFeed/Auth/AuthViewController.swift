@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     private let segueIdentifier = "ShowWebView"
@@ -41,16 +42,32 @@ extension AuthViewController: WebViewViewControllerDelegate {
     }
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
-        oAuth2Service.fetchOAuthToken(code: code) { [self] result in
+        UIBlockingProgressHUD.show()
+        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success:
+                guard let self else { return }
                 delegate?.didAuthenticate(self)
                 print("Successfully authenticated!")
             case .failure(let error):
                 print("Failed to fetch token: \(error)")
+                self?.showAuthErrorAlert()
             }
         }
-        
+    }
+}
+
+extension AuthViewController {
+    func showAuthErrorAlert() {
+        let alertController = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
