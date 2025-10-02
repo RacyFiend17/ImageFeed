@@ -1,15 +1,8 @@
-//
-//  ViewController.swift
-//  ImageFeed
-//
-//  Created by Дмитрий Перчемиди on 09.08.2025.
-//
-
 import UIKit
 
 class ImagesListViewController: UIViewController {
-
     @IBOutlet private var tableView: UITableView!
+    private let imagesListService = ImagesListService.shared
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let photosName: [String] = Array(0...19).map { "\($0)" }
     private lazy var dateFormatter: DateFormatter = {
@@ -49,7 +42,7 @@ class ImagesListViewController: UIViewController {
         let isLiked = indexPath.row % 2 == 0
         let likeImage = isLiked ? UIImage(named: "like_button_active") : UIImage(named: "like_button_no_active")
         cell.likeButton.setImage(likeImage, for: .normal)
-        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,5 +84,13 @@ extension ImagesListViewController: UITableViewDelegate {
         let ratio = imageViewWidth / imageWidth
         let cellHeight = imageHeight * ratio + imageInsets.top + imageInsets.bottom
         return cellHeight
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == imagesListService.photos.count - 1 {
+            imagesListService.fetchPhotosNextPage() { result in
+                // TODO:
+            }
+        }
     }
 }
