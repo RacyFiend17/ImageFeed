@@ -6,6 +6,7 @@ class ImagesListViewController: UIViewController {
     private let imagesListService = ImagesListService.shared
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private var photos: [Photo] = []
+    private let placeholderImage = UIImage(resource: .placeholder)
     private var ImagesListObserver: NSObjectProtocol?
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -63,10 +64,14 @@ class ImagesListViewController: UIViewController {
                 return
             }
             
-            guard let image = UIImage(named: photos[indexPath.row].thumbImageURL) else {
-                return
+            if let photoURL = URL(string: photos[indexPath.row].largeImageURL) {
+                let imageView = UIImageView()
+                imageView.kf.setImage(with: photoURL, placeholder: placeholderImage, options: [
+                    .cacheOriginalImage
+                ]){ _ in
+                    destinationViewController.image = imageView.image
+                }
             }
-            destinationViewController.image = image
         }
         else {
             super.prepare(for: segue, sender: sender)
@@ -75,7 +80,6 @@ class ImagesListViewController: UIViewController {
     
     private func config(for cell: ImagesListCell, with indexPath: IndexPath){
         let photo = photos[indexPath.row]
-        let placeholderImage = UIImage(resource: .placeholder)
         if let imageURL = URL(string: photo.largeImageURL) {
             cell.cellImage.kf.indicatorType = .activity
             cell.cellImage.kf.setImage(with: imageURL, placeholder: placeholderImage, options: [
