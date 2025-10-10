@@ -1,11 +1,5 @@
-//
-//  ImagesListCell.swift
-//  ImageFeed
-//
-//  Created by Дмитрий Перчемиди on 10.08.2025.
-//
-
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
@@ -13,4 +7,12 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cellImage: UIImageView!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = UIImage(resource: .placeholder)
+        dateLabel.text = nil
+        likeButton.setImage(nil, for: .normal)
+    }
 }

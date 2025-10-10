@@ -80,15 +80,13 @@ final class ImagesListService {
                     name: ImagesListService.didChangeNotification,
                     object: self,
                     userInfo: ["PhotosArray": photos, "lastLoadedPage": nextPage])
-                
-                self.lastLoadedPage? = nextPage
-                
+
                 completion(.success(self.photos))
             case .failure(let error):
                 print("[fetchPhotosNextPage]: Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))
             }
-            //            self.task = nil
+            self.lastLoadedPage = nextPage
         }
         self.task = task
         task.resume()
