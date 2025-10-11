@@ -17,6 +17,20 @@ final class ImagesListService {
         return dateFormatter
     } ()
     
+    private func makeChangeLikeRequest(token: String, photoID: String, isLike: Bool) -> URLRequest? {
+        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/photos/:\(photoID)/like") else { return nil }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        if isLike {
+            request.httpMethod = "PUT"
+        } else {
+            request.httpMethod = "DELETE"
+        }
+        
+        return request
+    }
+    
     private func makeImagesListRequest(token: String, nextPage: Int) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "\(Constants.defaultBaseURL)" + "/photos") else { return nil }
         urlComponents.queryItems = [
@@ -30,6 +44,48 @@ final class ImagesListService {
         
         return request
     }
+    
+    func changeLike(photoID: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void){
+        guard let token = OAuth2TokenStorage.shared.token else {
+            completion((.failure(FetchProfileErrors.tokenError("Token is nil"))))
+            return
+        }
+        
+        guard let request = makeChangeLikeRequest(token: token, photoID: photoID, isLike: isLike) else {
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        
+        let task = session.objectTask(for: request) { [weak self] (result: Result<PhotoResult, Error>) in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let photoResult):
+                if let index = self.photos.firstIndex(where: {$0.id == photoID}) {
+                    let photo = self.photos[index]
+                    
+                    let newPhoto = Photo(
+                        id: photo.id,
+                        size: photo.size,
+                        createdAt: photo.createdAt,
+                        welcomeDescription: photo.welcomeDescription,
+                        thumbImageURL: photo.thumbImageURL,
+                        largeImageURL: photo.largeImageURL,
+                        isLiked: !photo.isLiked)
+                    
+                    self.photos[index] = newPhoto
+                    
+                    completion(.success(()))
+                }
+                                
+            case .failure(let error):
+                print("[changeLike]: Ошибка запроса: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     
     func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
         if task != nil {
@@ -80,7 +136,7 @@ final class ImagesListService {
                     name: ImagesListService.didChangeNotification,
                     object: self,
                     userInfo: ["PhotosArray": photos, "lastLoadedPage": nextPage])
-
+                
                 completion(.success(self.photos))
             case .failure(let error):
                 print("[fetchPhotosNextPage]: Ошибка запроса: \(error.localizedDescription)")
