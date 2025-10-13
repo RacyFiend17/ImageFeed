@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import ProgressHUD
 
 final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
@@ -82,7 +83,7 @@ final class ProfileViewController: UIViewController {
                 case .failure(let error):
                     print(error)
                 }
-        }
+            }
     }
     
     private func updateProfileDetails(profile: Profile) {
@@ -101,8 +102,27 @@ final class ProfileViewController: UIViewController {
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    private func switchToSplashScreen() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        let splashViewController = SplashViewController()
+        UIView.transition(with: window,
+                          duration: 0.5,
+                          options: .transitionCrossDissolve,
+                          animations: {
+            window.rootViewController = splashViewController
+        },
+                          completion: nil)
+    }
+    
+    
     @objc private func didTapLogoutButton() {
-        
+        ProgressHUD.show()
+        ProfileLogoutService.shared.logout()
+        switchToSplashScreen()
+        ProgressHUD.dismiss()
     }
     
     private func makeAvatarImageView() {

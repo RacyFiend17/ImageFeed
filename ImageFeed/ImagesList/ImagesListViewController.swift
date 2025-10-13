@@ -7,7 +7,6 @@ class ImagesListViewController: UIViewController {
     private let imagesListService = ImagesListService.shared
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private var photos: [Photo] = []
-    private let placeholderImage = UIImage(resource: .placeholder)
     private var ImagesListObserver: NSObjectProtocol?
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -55,27 +54,6 @@ class ImagesListViewController: UIViewController {
             }
     }
     
-    private func showError(indexPath: IndexPath, destinationViewController: SingleImageViewController) {
-        let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Не надо", style: .default, handler: nil)
-        let action2 = UIAlertAction(title: "Попробовать ещё раз", style: .default) { [weak self] _ in
-            guard let self else { return }
-            if let photoURL = URL(string: self.photos[indexPath.row].largeImageURL) {
-                let imageView = UIImageView()
-                UIBlockingProgressHUD.show()
-                imageView.kf.setImage(with: photoURL, placeholder: placeholderImage, options: [
-                    .cacheOriginalImage
-                ]){ _ in
-                    UIBlockingProgressHUD.dismiss()
-                    destinationViewController.image = imageView.image
-                }
-            }
-        }
-        alert.addAction(action)
-        alert.addAction(action2)
-        present(alert, animated: true, completion: nil)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageSegueIdentifier {
             guard
@@ -86,19 +64,9 @@ class ImagesListViewController: UIViewController {
                 return
             }
             
-            if let photoURL = URL(string: photos[indexPath.row].largeImageURL) {
-                let imageView = UIImageView()
-                UIBlockingProgressHUD.show()
-                imageView.kf.setImage(with: photoURL, placeholder: placeholderImage, options: [
-                    .cacheOriginalImage
-                ]){ _ in
-                    UIBlockingProgressHUD.dismiss()
-                    destinationViewController.image = imageView.image
-                }
-            } else {
-                showError(indexPath: indexPath, destinationViewController: destinationViewController)
-            }
+            destinationViewController.imageURLString = photos[indexPath.row].largeImageURL
         }
+//   
         else {
             super.prepare(for: segue, sender: sender)
         }
@@ -106,13 +74,17 @@ class ImagesListViewController: UIViewController {
     
     private func config(for cell: ImagesListCell, with indexPath: IndexPath){
         let photo = photos[indexPath.row]
+        
         if let imageURL = URL(string: photo.largeImageURL) {
+            cell.cellImage.image = UIImage(resource: .placeholder)
+            
             cell.cellImage.kf.indicatorType = .activity
-            cell.cellImage.kf.setImage(with: imageURL, placeholder: placeholderImage, options: [
-                .cacheOriginalImage
-            ]) { _ in
-                self.tableView.reloadRows(at: [indexPath], with: .automatic)
-            }
+            cell.cellImage.kf.setImage(with: imageURL, placeholder: UIImage(resource: .placeholder), options: [.cacheOriginalImage]) { [weak self, weak cell] result in
+                        guard let self = self, let cell = cell else { return }
+                        
+                        if let currentIndexPath = self.tableView.indexPath(for: cell), currentIndexPath == indexPath {
+                    }
+                }
             
             if let date = photo.createdAt{
                 cell.dateLabel.text = dateFormatter.string(from: date)
@@ -121,7 +93,7 @@ class ImagesListViewController: UIViewController {
             }
         }
         else {
-            cell.cellImage.image = placeholderImage
+            cell.cellImage.image = UIImage(resource: .placeholder)
         }
         
         let isLiked = photo.isLiked
@@ -130,8 +102,6 @@ class ImagesListViewController: UIViewController {
         
         cell.delegate = self
     }
-    
-    
 }
 
 extension ImagesListViewController: UITableViewDataSource {
@@ -167,7 +137,7 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == imagesListService.photos.count - 1  {
+        if indexPath.row == photos.count - 1  {
             imagesListService.fetchPhotosNextPage() { _ in
                 
             }
@@ -176,9 +146,8 @@ extension ImagesListViewController: UITableViewDelegate {
 }
 
 extension ImagesListViewController: ImagesListCellDelegate {
-    func imageListCellDidTapLike(cell: ImagesListCell) {
+    func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        self.photos = self.imagesListService.photos
         let photoID = photos[indexPath.row].id
         let isLike = !photos[indexPath.row].isLiked
         UIBlockingProgressHUD.show()

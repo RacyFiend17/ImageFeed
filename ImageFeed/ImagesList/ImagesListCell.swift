@@ -18,7 +18,7 @@ final class ImagesListCell: UITableViewCell {
     }
     
     @IBAction func likeButtonClicked(_ sender: Any) {
-        delegate?.imageListCellDidTapLike(cell: self)
+        delegate?.imageListCellDidTapLike(self)
     }
     
     func changeLikeButtonState(_ isLiked: Bool) {
@@ -32,5 +32,5 @@ final class ImagesListCell: UITableViewCell {
 }
 
 protocol ImagesListCellDelegate: AnyObject {
-    func imageListCellDidTapLike(cell: ImagesListCell)
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
 }

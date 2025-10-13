@@ -17,16 +17,16 @@ final class ImagesListService {
         return dateFormatter
     } ()
     
+    func cleanImagesList() {
+        photos = []
+        lastLoadedPage = nil
+    }
+    
     private func makeChangeLikeRequest(token: String, photoID: String, isLike: Bool) -> URLRequest? {
-        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/photos/:\(photoID)/like") else { return nil }
+        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/photos/\(photoID)/like") else { return nil }
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        if isLike {
-            request.httpMethod = "PUT"
-        } else {
-            request.httpMethod = "DELETE"
-        }
+        request.httpMethod = isLike ? "POST" : "DELETE"
         
         return request
     }
@@ -56,11 +56,11 @@ final class ImagesListService {
             return
         }
         
-        let task = session.objectTask(for: request) { [weak self] (result: Result<PhotoResult, Error>) in
+        let task = session.objectTask(for: request) { [weak self] (result: Result<LikeResponse, Error>) in
             guard let self else { return }
             
             switch result {
-            case .success(let photoResult):
+            case .success:
                 if let index = self.photos.firstIndex(where: {$0.id == photoID}) {
                     let photo = self.photos[index]
                     

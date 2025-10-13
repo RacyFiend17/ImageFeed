@@ -22,3 +22,7 @@ struct UrlsResult: Decodable {
     let thumb: String
     let regular: String
 }
+
+struct LikeResponse: Decodable {
+    let photo: PhotoResult
+}
