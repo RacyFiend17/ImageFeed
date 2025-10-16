@@ -14,7 +14,8 @@ final class SingleImageViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     @IBAction func didTapShareButton(_ sender: UIButton) {
-        let activityViewController = UIActivityViewController(activityItems: [imageView.image!], applicationActivities: nil)
+        guard let image = imageView.image else { return }
+        let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(activityViewController, animated: true, completion: nil)
     }
     
@@ -66,12 +67,12 @@ final class SingleImageViewController: UIViewController {
     
     private func showError() {
         let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Не надо", style: .default, handler: nil)
-        let action2 = UIAlertAction(title: "Попробовать ещё раз", style: .default) { [weak self] _ in
+        let cancelAction = UIAlertAction(title: "Не надо", style: .default, handler: nil)
+        let retryAction = UIAlertAction(title: "Попробовать ещё раз", style: .default) { [weak self] _ in
             self?.loadImageFromURL()
         }
-        alert.addAction(action)
-        alert.addAction(action2)
+        alert.addAction(cancelAction)
+        alert.addAction(retryAction)
         present(alert, animated: true, completion: nil)
     }
 

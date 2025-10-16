@@ -17,18 +17,13 @@ final class ImagesListCell: UITableViewCell {
         likeButton.setImage(nil, for: .normal)
     }
     
-    @IBAction func likeButtonClicked(_ sender: Any) {
+    @IBAction private func likeButtonClicked(_ sender: Any) {
         delegate?.imageListCellDidTapLike(self)
     }
     
     func changeLikeButtonState(_ isLiked: Bool) {
-        if isLiked {
-            likeButton.setImage(UIImage(resource: .likeButtonActive), for: .normal)
-        } else {
-            likeButton.setImage(UIImage(resource: .likeButtonNoActive), for: .normal)
-        }
+            likeButton.setImage(UIImage(resource: isLiked ? .likeButtonActive : .likeButtonNoActive), for: .normal)
     }
-    
 }
 
 protocol ImagesListCellDelegate: AnyObject {

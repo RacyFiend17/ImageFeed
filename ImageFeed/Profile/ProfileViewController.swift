@@ -108,15 +108,15 @@ final class ProfileViewController: UIViewController {
             return
         }
         let splashViewController = SplashViewController()
-        UIView.transition(with: window,
-                          duration: 0.5,
-                          options: .transitionCrossDissolve,
-                          animations: {
-            window.rootViewController = splashViewController
-        },
-                          completion: nil)
+        UIView.transition(
+            with: window,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                window.rootViewController = splashViewController
+            },
+            completion: nil)
     }
-    
     
     @objc private func didTapLogoutButton() {
         ProgressHUD.show()

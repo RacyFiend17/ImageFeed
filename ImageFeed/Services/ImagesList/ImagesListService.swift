@@ -4,11 +4,15 @@ final class ImagesListService {
     static let shared = ImagesListService()
     private init () {}
     
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     private var task: URLSessionTask?
     private var session: URLSession = .shared
     private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
+    
+    private static let formatter: ISO8601DateFormatter = {
+        ISO8601DateFormatter()
+    }()
     
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -20,29 +24,6 @@ final class ImagesListService {
     func cleanImagesList() {
         photos = []
         lastLoadedPage = nil
-    }
-    
-    private func makeChangeLikeRequest(token: String, photoID: String, isLike: Bool) -> URLRequest? {
-        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/photos/\(photoID)/like") else { return nil }
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = isLike ? "POST" : "DELETE"
-        
-        return request
-    }
-    
-    private func makeImagesListRequest(token: String, nextPage: Int) -> URLRequest? {
-        guard var urlComponents = URLComponents(string: "\(Constants.defaultBaseURL)" + "/photos") else { return nil }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "page", value: "\(nextPage)"),
-            URLQueryItem(name: "per_page", value: "10")
-        ]
-        guard let url = urlComponents.url else { return nil }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        return request
     }
     
     func changeLike(photoID: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void){
@@ -77,7 +58,7 @@ final class ImagesListService {
                     
                     completion(.success(()))
                 }
-                                
+                
             case .failure(let error):
                 print("[changeLike]: Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))
@@ -86,21 +67,29 @@ final class ImagesListService {
         task.resume()
     }
     
+    private func makeChangeLikeRequest(token: String, photoID: String, isLike: Bool) -> URLRequest? {
+        guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/photos/\(photoID)/like") else { return nil }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = isLike ? HTTPMethods.post.rawValue : HTTPMethods.delete.rawValue
+        
+        return request
+    }
     
-    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
+    func fetchPhotosNextPage() {
         if task != nil {
             print("ImagesListService: fetchPhotosNextPage: request is already in progress")
             return }
         
         guard let token = OAuth2TokenStorage.shared.token else {
-            completion((.failure(FetchProfileErrors.tokenError("Token is nil"))))
+            
             return
         }
         
         let nextPage = (lastLoadedPage ?? 0) + 1
         
         guard let request = makeImagesListRequest(token: token, nextPage: nextPage) else {
-            completion(.failure(NetworkError.invalidRequest))
+            
             return
         }
         
@@ -114,10 +103,12 @@ final class ImagesListService {
             case .success(let photoResultArray):
                 
                 for photoResult in photoResultArray{
-                    var date: Date? = nil
-                    if photoResult.createdAt != nil {
-                        let formatter = ISO8601DateFormatter()
-                        date = formatter.date(from: photoResult.createdAt!)
+                    var date: Date?
+                    
+                    if self.photos.contains(where: { $0.id == photoResult.id }) { continue }
+                    
+                    if let createdAt = photoResult.createdAt {
+                        date = ImagesListService.formatter.date(from: createdAt)
                     }
                     
                     let photo = Photo(
@@ -137,14 +128,30 @@ final class ImagesListService {
                     object: self,
                     userInfo: ["PhotosArray": photos, "lastLoadedPage": nextPage])
                 
-                completion(.success(self.photos))
+                self.lastLoadedPage = nextPage
+                
             case .failure(let error):
                 print("[fetchPhotosNextPage]: Ошибка запроса: \(error.localizedDescription)")
-                completion(.failure(error))
+                
             }
-            self.lastLoadedPage = nextPage
         }
         self.task = task
         task.resume()
     }
+    
+    
+    private func makeImagesListRequest(token: String, nextPage: Int) -> URLRequest? {
+        guard var urlComponents = URLComponents(string: "\(Constants.defaultBaseURL)" + "/photos") else { return nil }
+        urlComponents.queryItems = [
+            URLQueryItem(name: "page", value: "\(nextPage)"),
+            URLQueryItem(name: "per_page", value: "10")
+        ]
+        guard let url = urlComponents.url else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethods.get.rawValue
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
 }
