@@ -1,32 +1,5 @@
 import Foundation
 
-enum FetchProfileErrors: Error{
-    case tokenError(String)
-}
-
-struct ProfileResult: Codable {
-    let username: String
-    let firstName: String
-    let lastName: String
-    let bio: String?
-    
-    
-    enum CodingKeys: String, CodingKey {
-        case username
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case bio
-    }
-}
-
-struct Profile {
-    let username: String
-    let name: String
-    let loginName: String
-    let bio: String?
-}
-
-
 final class ProfileService {
     
     private var task: URLSessionTask?
@@ -35,6 +8,10 @@ final class ProfileService {
     private(set) var profile: Profile?
     
     private init() {}
+    
+    func cleanProfile() {
+        profile = nil
+    }
     
     private func makeProfileRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "\(Constants.defaultBaseURL)" + "/me") else { return nil }

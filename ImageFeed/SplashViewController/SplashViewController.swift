@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class SplashViewController: UIViewController {
     private let storage = OAuth2TokenStorage.shared
@@ -76,7 +77,6 @@ final class SplashViewController: UIViewController {
         }
     }
 }
-
 
 extension SplashViewController: AuthViewViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {

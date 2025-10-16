@@ -1,20 +1,14 @@
-//
-//  AppDelegate.swift
-//  ImageFeed
-//
-//  Created by Дмитрий Перчемиди on 09.08.2025.
-//
-
 import UIKit
+import ProgressHUD
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        return true
+            ProgressHUD.animationType = .systemActivityIndicator
+            ProgressHUD.colorHUD = .white
+            ProgressHUD.colorAnimation = .black
+            return true
     }
 
     // MARK: UISceneSession Lifecycle
@@ -24,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to select a configuration to create the new scene with.
         let sceneConfiguration = UISceneConfiguration(name: "Main", sessionRole: connectingSceneSession.role)
         sceneConfiguration.delegateClass = SceneDelegate.self
-        return sceneConfiguration
+        return sceneConfiguration   
     }
 
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {

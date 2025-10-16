@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import ProgressHUD
 
 final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
@@ -82,7 +83,7 @@ final class ProfileViewController: UIViewController {
                 case .failure(let error):
                     print(error)
                 }
-        }
+            }
     }
     
     private func updateProfileDetails(profile: Profile) {
@@ -101,8 +102,41 @@ final class ProfileViewController: UIViewController {
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    private func switchToSplashScreen() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        let splashViewController = SplashViewController()
+        UIView.transition(
+            with: window,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                window.rootViewController = splashViewController
+            },
+            completion: nil)
+    }
+    
     @objc private func didTapLogoutButton() {
+        showLogoutAlert()
+    }
+    
+    private func showLogoutAlert() {
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+      
+        let disagreeAction = UIAlertAction(title: "Нет", style: .default, handler: nil)
+        let agreeAction = UIAlertAction(title: "Да", style: .default) { _ in
+            ProgressHUD.show()
+            ProfileLogoutService.shared.logout()
+            self.switchToSplashScreen()
+            ProgressHUD.dismiss()
+        }
         
+        alert.addAction(agreeAction)
+        alert.addAction(disagreeAction)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     private func makeAvatarImageView() {

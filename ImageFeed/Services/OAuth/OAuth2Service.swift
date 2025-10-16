@@ -7,6 +7,10 @@ final class OAuth2Service {
     private let tokenStorage = OAuth2TokenStorage.shared
     private init() {}
     
+    func cleanToken() {
+        tokenStorage.token = nil
+    }
+    
     private func makeOAuthTokenRequest (code: String) -> URLRequest? {
         guard var components = URLComponents(string: Constants.getTokenBaseURL) else { return nil }
         
