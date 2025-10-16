@@ -124,13 +124,14 @@ final class ProfileViewController: UIViewController {
     
     private func showLogoutAlert() {
         let alert = UIAlertController(title: "Пока, пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+      
+        let disagreeAction = UIAlertAction(title: "Нет", style: .default, handler: nil)
         let agreeAction = UIAlertAction(title: "Да", style: .default) { _ in
             ProgressHUD.show()
             ProfileLogoutService.shared.logout()
             self.switchToSplashScreen()
             ProgressHUD.dismiss()
         }
-        let disagreeAction = UIAlertAction(title: "Нет", style: .cancel, handler: nil)
         
         alert.addAction(agreeAction)
         alert.addAction(disagreeAction)
