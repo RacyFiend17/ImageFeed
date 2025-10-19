@@ -23,7 +23,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         
     }
     
-    private func shouldHideProgressView(for value: Float) -> Bool {
+    func shouldHideProgressView(for value: Float) -> Bool {
         abs(value - 1) <= 0.0001
     }
     
