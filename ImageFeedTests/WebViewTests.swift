@@ -59,6 +59,46 @@ final class WebViewTests: XCTestCase {
         XCTAssertTrue(shouldHideProgressView)
     }
     
+    func testAuthHelper() {
+        //given
+        let authHelper = AuthHelper()
+        let configuration = AuthConfiguration.standart
+        
+        //when
+        let url = authHelper.authURL()
+        
+        guard let urlString = url?.absoluteString else {
+            XCTFail("Auth URL is nil")
+            return
+        }
+        
+        //then
+        XCTAssertTrue(urlString.contains(configuration.accessKey))
+        XCTAssertTrue(urlString.contains("code"))
+        XCTAssertTrue(urlString.contains(configuration.redirectURI))
+        XCTAssertTrue(urlString.contains(configuration.accessScope))
+    }
+    
+    func testCodeFromURL() {
+        //given
+        guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native") else {
+            XCTFail("Failed to create URLComponents")
+            return
+        }
+        urlComponents.queryItems = [URLQueryItem(name: "code", value: "test code")]
+        guard let url = urlComponents.url else {
+            XCTFail("Failed to create URL")
+            return
+        }
+        let authHelper = AuthHelper()
+        
+        //when
+        let code = authHelper.code(from: url)
+        
+        //then
+        XCTAssertEqual(code, "test code")
+    }
+    
     final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
         var presenter: WebViewPresenterProtocol?
         

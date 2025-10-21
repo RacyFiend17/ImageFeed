@@ -17,7 +17,7 @@ final class AuthHelper: AuthHelperProtocol {
         return URLRequest(url: url)
     }
     
-    private func authURL() -> URL? {
+    func authURL() -> URL? {
         guard var urlComponents = URLComponents(string: configuration.unsplashAuthorizeURLString) else {
             return nil
         }

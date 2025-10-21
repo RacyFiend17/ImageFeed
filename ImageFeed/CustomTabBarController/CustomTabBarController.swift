@@ -7,12 +7,23 @@ final class CustomTabBarController: UITabBarController {
         
         let imagesListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController")
         let profileViewController = ProfileViewController()
+        let profileService = ProfileService.shared
+        let profileImageService = ProfileImageService.shared
+        let logoutService = ProfileLogoutService.shared
+        let profilePresenter = ProfilePresenter(
+                   profileService: profileService,
+                   profileImageService: profileImageService,
+                   profileLogoutService: logoutService
+               )
+        profileViewController.presenter = profilePresenter
+        profilePresenter.view = profileViewController
+
         profileViewController.tabBarItem = UITabBarItem(
-            title: "",
-            image: UIImage(resource: .profileActive),
-            selectedImage: nil
-            )
-        
+                   title: "",
+                   image: UIImage(resource: .profileActive),
+                   selectedImage: nil
+               )
+
         viewControllers = [imagesListViewController, profileViewController]
         
     }
