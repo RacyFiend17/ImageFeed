@@ -11,21 +11,23 @@ class Image_FeedUITests: XCTestCase {
     func testAuth() throws {
         app.buttons["Authenticate"].tap()
         
-        let webView = app.webViews["UnsplashWebView"]
+//        let webView = app.webViews["UnsplashWebView"]
         sleep(5)
         
         let loginTextField = app/*@START_MENU_TOKEN@*/.textFields["Email address"]/*[[".otherElements.textFields[\"Email address\"]",".textFields",".textFields[\"Email address\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch
         let hideKeyboard = app/*@START_MENU_TOKEN@*/.buttons["selected"]/*[[".otherElements.buttons[\"selected\"]",".buttons[\"selected\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch
         loginTextField.tap()
-        loginTextField.typeText("*****")
+        loginTextField.typeText("****")
         hideKeyboard.tap()
         
         let passwordTextField = app/*@START_MENU_TOKEN@*/.secureTextFields["Password"]/*[[".otherElements.secureTextFields[\"Password\"]",".secureTextFields",".secureTextFields[\"Password\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch
         passwordTextField.tap()
-        passwordTextField.typeText("*****")
+        passwordTextField.typeText("****")
         hideKeyboard.tap()
         
         app/*@START_MENU_TOKEN@*/.buttons["Login"]/*[[".otherElements.buttons[\"Login\"]",".buttons",".buttons[\"Login\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
+        
+        sleep(5)
         
         let tablesQuery = app.tables
         let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
@@ -34,18 +36,25 @@ class Image_FeedUITests: XCTestCase {
     }
     
     func testFeed() throws {
-        
+        sleep(5)
         let tablesQuery = app.tables
         
         let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
         cell.swipeUp()
         
         sleep(2)
+        
+        tablesQuery.element.swipeDown()
+        
+        let app = XCUIApplication()
+        app.activate()
 
         let buttonsQuery = app.buttons
         
-        buttonsQuery.matching(identifier: "like button no active").element(boundBy: 0).tap()
-        buttonsQuery.matching(identifier: "like button active").element(boundBy: 0).tap()
+        buttonsQuery.matching(identifier: "Like Button").element(boundBy: 0).tap()
+        
+        sleep(1)
+        buttonsQuery.matching(identifier: "Like Button").element(boundBy: 0).tap()
         
         sleep(2)
         
@@ -55,15 +64,15 @@ class Image_FeedUITests: XCTestCase {
         
         image.pinch(withScale: 0.5, velocity: -1)
         
-        app/*@START_MENU_TOKEN@*/.buttons["backward button"]/*[[".otherElements.buttons[\"backward button\"]",".buttons[\"backward button\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
+        app/*@START_MENU_TOKEN@*/.buttons["backButton"]/*[[".otherElements",".buttons[\"backward button\"]",".buttons[\"backButton\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
     }
     
     func testProfile() throws {
         sleep(3)
         app.tabBars.buttons.element(boundBy: 1).tap()
         
-        XCTAssertTrue(app.staticTexts["Name Lastname"].exists)
-        XCTAssertTrue(app.staticTexts["@username"].exists)
+        XCTAssertTrue(app.staticTexts["Name LastName"].exists)
+        XCTAssertTrue(app.staticTexts["@nickname"].exists)
         
         app.buttons["logout button"].firstMatch.tap()
         
