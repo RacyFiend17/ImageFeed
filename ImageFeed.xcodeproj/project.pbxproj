@@ -31,8 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F0126402EA826B90045DBA8 /* ImageFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F239CC32EA44B05003FC54A /* ImageFeedTestss.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageFeedTestss.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3F8F926F2E98EA52003AD721 /* ImageFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = ImageFeedTests.xctest; path = "/Users/racyfiend/Documents/Swift Projects/Yandex_practicum/ImageFeed/build/Debug-iphoneos/ImageFeed.app/PlugIns/ImageFeedTests.xctest"; sourceTree = "<absolute>"; };
 		3FB3FAAB2E549209003D8AF4 /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FB3FB542E571F1F003D8AF4 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -100,6 +100,7 @@
 				3F239CC42EA44B05003FC54A /* ImageFeedTests */,
 				3FB3FB532E571F1F003D8AF4 /* Frameworks */,
 				3F239CC32EA44B05003FC54A /* ImageFeedTestss.xctest */,
+				3F0126402EA826B90045DBA8 /* ImageFeedTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -179,7 +180,7 @@
 			packageProductDependencies = (
 			);
 			productName = ImageFeedTests;
-			productReference = 3F8F926F2E98EA52003AD721 /* ImageFeedTests.xctest */;
+			productReference = 3F0126402EA826B90045DBA8 /* ImageFeedTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */

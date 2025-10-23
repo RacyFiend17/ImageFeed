@@ -105,7 +105,7 @@
         <!--Single Image-->
         <scene sceneID="Blw-xk-3Jr">
             <objects>
-                <viewController title="Single Image" modalPresentationStyle="fullScreen" id="sst-Ef-WE4" customClass="SingleImageViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SingleImageViewController" title="Single Image" modalPresentationStyle="fullScreen" id="sst-Ef-WE4" customClass="SingleImageViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2Xu-Ai-pf2">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -99,6 +99,9 @@ final class WebViewTests: XCTestCase {
         XCTAssertEqual(code, "test code")
     }
     
+    
+    // MARK: - Fakes / Spies
+    
     final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
         var presenter: WebViewPresenterProtocol?
         

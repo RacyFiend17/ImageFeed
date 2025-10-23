@@ -1,6 +1,6 @@
 import Foundation
 
-final class ImagesListService {
+final class ImagesListService: ImagesListServiceProtocol {
     static let shared = ImagesListService()
     private init () {}
     
@@ -123,11 +123,12 @@ final class ImagesListService {
                     self.photos.append(photo)
                 }
                 
-                NotificationCenter.default.post(
-                    name: ImagesListService.didChangeNotification,
-                    object: self,
-                    userInfo: ["PhotosArray": photos, "lastLoadedPage": nextPage])
-                
+                DispatchQueue.main.async{ [weak self] in
+                    NotificationCenter.default.post(
+                        name: ImagesListService.didChangeNotification,
+                        object: self,
+                        userInfo: ["PhotosArray": self?.photos, "lastLoadedPage": nextPage])
+                }
                 self.lastLoadedPage = nextPage
                 
             case .failure(let error):
@@ -154,4 +155,10 @@ final class ImagesListService {
         return request
     }
     
+}
+
+public protocol ImagesListServiceProtocol {
+    func fetchPhotosNextPage()
+    func changeLike(photoID: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+    var photos: [Photo] { get }
 }

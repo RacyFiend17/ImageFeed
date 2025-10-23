@@ -170,6 +170,7 @@ final class ProfileViewTests: XCTestCase {
     
 }
 
+// MARK: - Fakes / Spies
 
 final class ProfileViewControllerSpy: ProfileViewControllerProtocol {
     var presenter: ProfilePresenterProtocol?

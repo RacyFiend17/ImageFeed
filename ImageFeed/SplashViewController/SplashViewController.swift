@@ -86,6 +86,5 @@ extension SplashViewController: AuthViewViewControllerDelegate {
             return
         }
         fetchProfile(token: token)
-        
     }
 }
