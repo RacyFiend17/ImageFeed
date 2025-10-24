@@ -58,11 +58,11 @@ class Image_FeedUITests: XCTestCase {
         
         sleep(2)
         
-        let image = app.scrollViews.images.element(boundBy: 0)
+        let imagesQuery = app.images
+        cell.tap()
         
-        image.pinch(withScale: 3, velocity: 1)
-        
-        image.pinch(withScale: 0.5, velocity: -1)
+        imagesQuery.firstMatch.pinch(withScale: 3, velocity: 1)
+        imagesQuery.firstMatch.pinch(withScale: 0.5, velocity: -1)
         
         app/*@START_MENU_TOKEN@*/.buttons["backButton"]/*[[".otherElements",".buttons[\"backward button\"]",".buttons[\"backButton\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.firstMatch.tap()
     }
