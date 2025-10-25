@@ -2,10 +2,8 @@ import UIKit
 import Kingfisher
 import ProgressHUD
 
-final class ProfileViewController: UIViewController {
-    private let profileService = ProfileService.shared
-    private var oAuth2TokenStorage = OAuth2TokenStorage.shared
-    private var profileImageObserver: NSObjectProtocol?
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    var presenter: ProfilePresenterProtocol?
     
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
@@ -36,29 +34,14 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
-        if let profile = profileService.profile {
-            updateProfileDetails(profile: profile)
-        }
-        profileImageObserver = NotificationCenter.default.addObserver(
-            forName: ProfileImageService.didChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateAvatar()
-        }
-        updateAvatar()
+        
+        presenter?.viewDidLoad()
     }
     
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let imageUrl = URL(string: profileImageURL)
-        else { print("imageUrl is nil"); return }
-        
-        print("imageUrl: \(imageUrl)")
-        
+    func updateProfileImage(imageURL: URL) {
+
         let placeholderImage = UIImage(systemName: "person.circle.fill")?
             .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
             .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
@@ -66,14 +49,14 @@ final class ProfileViewController: UIViewController {
         let processor = RoundCornerImageProcessor(cornerRadius: 61)
         avatarImageView.kf.indicatorType = .activity
         avatarImageView.kf.setImage(
-            with: imageUrl,
+            with: imageURL,
             placeholder: placeholderImage,
             options: [
                 .processor(processor),
                 .scaleFactor(UIScreen.main.scale),
                 .cacheOriginalImage,
                 .forceRefresh
-            ]) { result in
+            ]) { [weak self] result in
                 
                 switch result {
                 case .success(let value):
@@ -82,11 +65,12 @@ final class ProfileViewController: UIViewController {
                     
                 case .failure(let error):
                     print(error)
+                    self?.updateProfileImage(imageURL: imageURL)
                 }
             }
     }
     
-    private func updateProfileDetails(profile: Profile) {
+    func updateProfileDetails(profile: Profile) {
         nameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
         loginNameLabel.text = profile.loginName.isEmpty ? "@неизвестный_пользователь" : profile.loginName
         descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
@@ -102,42 +86,42 @@ final class ProfileViewController: UIViewController {
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    private func switchToSplashScreen() {
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
-        let splashViewController = SplashViewController()
-        UIView.transition(
-            with: window,
-            duration: 0.5,
-            options: .transitionCrossDissolve,
-            animations: {
-                window.rootViewController = splashViewController
-            },
-            completion: nil)
-    }
-    
     @objc private func didTapLogoutButton() {
-        showLogoutAlert()
+        presenter?.presentLogoutAlert()
     }
     
-    private func showLogoutAlert() {
-        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
-      
-        let disagreeAction = UIAlertAction(title: "Нет", style: .default, handler: nil)
-        let agreeAction = UIAlertAction(title: "Да", style: .default) { _ in
-            ProgressHUD.show()
-            ProfileLogoutService.shared.logout()
-            self.switchToSplashScreen()
-            ProgressHUD.dismiss()
+    func alertLogoutConfirmation(completion: @escaping (Bool) -> Void) {
+            let alert = UIAlertController(title: "Пока, пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+        
+            let disagreeAction = UIAlertAction(title: "Нет", style: .default) { _ in completion(false) }
+            let agreeAction = UIAlertAction(title: "Да", style: .default) { _ in completion(true) }
+            alert.addAction(agreeAction)
+            alert.addAction(disagreeAction)
+        
+            present(alert, animated: true, completion: nil)
         }
-        
-        alert.addAction(agreeAction)
-        alert.addAction(disagreeAction)
-        
-        self.present(alert, animated: true, completion: nil)
+    
+    func showLoading() {
+        ProgressHUD.show()
     }
+
+    func hideLoading() {
+        ProgressHUD.dismiss()
+    }
+    
+    func switchToSplashScreen() {
+            guard let window = UIApplication.shared.windows.first else {
+                assertionFailure("Invalid window configuration")
+                return
+            }
+            let splashViewController = SplashViewController()
+            UIView.transition(
+                with: window,
+                duration: 0.5,
+                options: .transitionCrossDissolve,
+                animations: { window.rootViewController = splashViewController },
+                completion: nil)
+        }
     
     private func makeAvatarImageView() {
         avatarImageView.image = UIImage(systemName: "person.circle.fill")?
@@ -184,4 +168,14 @@ final class ProfileViewController: UIViewController {
         
         setupConstraints()
     }
+}
+
+public protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfilePresenterProtocol? { get set }
+    func updateProfileDetails(profile: Profile)
+    func updateProfileImage(imageURL: URL)
+    func alertLogoutConfirmation(completion: @escaping (Bool) -> Void)
+    func showLoading()
+    func hideLoading()
+    func switchToSplashScreen()
 }

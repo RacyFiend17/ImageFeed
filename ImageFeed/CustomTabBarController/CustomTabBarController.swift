@@ -5,14 +5,28 @@ final class CustomTabBarController: UITabBarController {
         super.awakeFromNib()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        let imagesListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController")
-        let profileViewController = ProfileViewController()
-        profileViewController.tabBarItem = UITabBarItem(
-            title: "",
-            image: UIImage(resource: .profileActive),
-            selectedImage: nil
-            )
+        guard let imagesListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController") as? ImagesListViewController else {
+            assertionFailure("Could not instantiate ImagesListViewController from storyboard")
+            return
+        }
+        let imagesListPresenter = ImagesListPresenter(imagesListService: ImagesListService.shared)
+        imagesListViewController.configure(presenter: imagesListPresenter)
         
+        let profileViewController = ProfileViewController()
+        let profilePresenter = ProfilePresenter(
+                   profileService: ProfileService.shared,
+                   profileImageService: ProfileImageService.shared,
+                   profileLogoutService: ProfileLogoutService.shared
+               )
+        profileViewController.presenter = profilePresenter
+        profilePresenter.view = profileViewController
+
+        profileViewController.tabBarItem = UITabBarItem(
+                   title: "",
+                   image: UIImage(resource: .profileActive),
+                   selectedImage: nil
+               )
+
         viewControllers = [imagesListViewController, profileViewController]
         
     }

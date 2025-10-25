@@ -63,13 +63,14 @@ final class SplashViewController: UIViewController {
     private func fetchProfile(token: String){
         UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
             
             guard let self else { return }
             switch result {
             case .success(let profile):
-                profileImageService.fetchProfileImageURL(username: profile.username) { _ in }
-                self.switchToBarController()
+                profileImageService.fetchProfileImageURL(username: profile.username) { _ in
+                    UIBlockingProgressHUD.dismiss()
+                    self.switchToBarController()
+                }
             case .failure(let error):
                 print("Error: \(error)")
                 break
@@ -85,6 +86,5 @@ extension SplashViewController: AuthViewViewControllerDelegate {
             return
         }
         fetchProfile(token: token)
-        
     }
 }
