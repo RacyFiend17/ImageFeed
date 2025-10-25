@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 import ProgressHUD
 
 final class ProfilePresenter: ProfilePresenterProtocol {

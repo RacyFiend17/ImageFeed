@@ -1,6 +1,6 @@
 import XCTest
 
-class Image_FeedUITests: XCTestCase {
+final class Image_FeedUITests: XCTestCase {
     private let app = XCUIApplication()
     
     override func setUpWithError() throws {
